@@ -1,0 +1,79 @@
+from collections import defaultdict
+def bfs(graph, start):
+    #queue = [(start, 0)]
+    #queue1= [(start, 0)]
+    queue=[(start,0)]
+    global l3 
+    l3 = [start]
+    global l2 
+    l2 = []
+    visited = set()
+    result = defaultdict(list)
+    #print(queue)
+    while queue:
+        node, time = queue.pop(0)
+        visited.add(node)
+        result[time].append(node)
+        #print(node)
+        #print(len(graph[node]))
+        max_len=0
+        max_neighbor=''
+        #print(graph[node])
+        #print(visited)
+        l=[]
+        for neighbor in graph[node]:
+            #print(neighbor)
+            if neighbor not in visited:
+              if len(graph[neighbor]) > max_len:
+                max_len = len(graph[neighbor])
+                max_neighbor = neighbor
+              l.append((neighbor,time))
+        if (max_neighbor,time) in l:
+          l.remove((max_neighbor,time))
+        #print(l)
+        if len(l)!=0:
+          l2.append(l)
+          l3.append(max_neighbor)
+        #print(l2,l3)
+        #print(max_len,max_neighbor)
+        if max_neighbor not in visited:
+            queue.append((max_neighbor, time + 1))
+            visited.add(max_neighbor)
+        #print(max_neighbor)
+    #print(result)
+    return result
+
+def main():
+    # Read in the description of the network
+    graph = defaultdict(list)
+    # Example: graph['A'] = ['B', 'C'] means A is connected to B and C
+    graph['A'] = ['C']
+    graph['B'] = ['C']
+    graph['C'] = ['A','B','D']
+    graph['D'] = ['E', 'F','C']
+    graph['E'] = ['D']
+    graph['F'] = ['D','G']
+    graph['G'] = ['F']
+
+    # Read in the originating node of the message
+    start = 'C'
+
+    # Determine the optimal order of sending the message
+    result = bfs(graph, start)
+    l3.pop(-1)
+    #l2.pop(-1)
+    #print(l2,l3)
+    for node in range(0,len(result)-2):
+        print("TIME", node + 1)
+        print("FROM", result[node][0])
+        neighbor=result[node+1][0]
+        print("TO", neighbor)
+        if node>0 and len(l2)>0:
+         for j in range(node):
+           if len(l2[j])>=1:
+             y=l2[j][0]
+             print("FROM", l3[j])
+             print("TO", y[0])
+             l2[j].remove(y)
+if _name_ == "_main_":
+    main()
